@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { User } from 'src/app/model/user';
+import { AlertifyService } from 'src/app/services/alertify.service';
+import { UserServiceService } from 'src/app/services/userService.service';
 
 @Component({
   selector: 'app-user-register',
@@ -9,34 +12,54 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators }
 export class UserRegisterComponent implements OnInit {
 
   registerationForm!: FormGroup;
-  constructor() { }
+  user!: User;
+  userSubmitted: boolean = false;
+  constructor(private fb : FormBuilder, private userService : UserServiceService , private alertService : AlertifyService) { }
 
   ngOnInit() {
-    this.registerationForm=new FormGroup(
-      {
-        userName : new FormControl( null,Validators.required),
-        email : new FormControl(null,[Validators.required,Validators.email]),
-        password : new FormControl(null,[Validators.required,Validators.minLength(8)]),
-        confirmPassword : new FormControl(null,[Validators.required]),
-        mobile: new FormControl(null, [Validators.required,Validators.maxLength(10)])
-      }
-      , {validators: this.passwordMatchingValidator}
-    )
+     this.createRegisterationForm();
+  }
+  createRegisterationForm() {
+this.registerationForm = this.fb.group({
+  userName: [null,Validators.required],
+  email:[null,[Validators.required,Validators.email]],
+  password:[null,[Validators.required,Validators.minLength(8)]],
+  confirmPassword:[null,[Validators.required]],
+  mobile:[null,[Validators.required,Validators.maxLength(10)]]
+},{validators: this.passwordMatchingValidator})
   }
   passwordMatchingValidator(fc: AbstractControl): ValidationErrors | null {
     return fc.get('password')?.value === fc.get('confirmPassword')?.value ? null :
       { notmatched: true }
   };
   onSubmit(){
-    //console.log('test');
 
-    console.log(this.registerationForm.errors);
-    console.log(this.registerationForm.hasError('notmatched'));
-    console.log(this.confirmPassword.valid);
-    //console.log( this.registerationForm && registerationForm?.errors['notMatched']);
+    if(this.registerationForm.valid)
+    {
+      this.userSubmitted = true;
+    //console.log(this.registerationForm.value);
+   // this.user = Object.assign(this.user, this.registerationForm.value);
+    this.userService.addUser(this.userData());
+    this.registerationForm.reset();
+    this.userSubmitted = false;
+    this.alertService.success();
+    }
+    else
+    {
+      this.alertService.failure();
 
+    }
 
   }
+  userData() : User{
+    return this.user = {
+      userName : this.userName.value,
+      email : this.email.value,
+      password: this.password.value,
+      mobile: this.mobile.value
+    }
+  }
+
   get f(){
     return this.registerationForm;
   }
