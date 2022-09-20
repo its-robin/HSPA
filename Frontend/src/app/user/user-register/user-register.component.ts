@@ -42,11 +42,11 @@ this.registerationForm = this.fb.group({
     this.userService.addUser(this.userData());
     this.registerationForm.reset();
     this.userSubmitted = false;
-    this.alertService.success();
+    this.alertService.success('Registration Successful');
     }
     else
     {
-      this.alertService.failure();
+      this.alertService.failure('Registration failure');
 
     }
 

@@ -8,12 +8,12 @@ export class AlertifyService {
 
 constructor() { }
 
-success()
+success(message : string  )
 {
-  alertyfy.success('Congrats , you are registered!')
+  alertyfy.success(message);
 }
-failure()
+failure(message : string)
 {
-  alertyfy.error('Please provide all requiste fields!')
+  alertyfy.error(message);
 }
 }
