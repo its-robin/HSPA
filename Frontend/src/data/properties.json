@@ -3,14 +3,14 @@
     "Id": 1,
     "SellRent":1,
     "Name": "Robin House",
-    "Type": "House",
+    "PType": "House",
     "Price": 12000
   },
   {
     "Id": 2,
     "SellRent":1,
     "Name": "Guest House",
-    "Type": "House",
+    "PType": "House",
     "Price": 12000,
     "Image":"prop-1"
   },
@@ -18,7 +18,7 @@
     "Id": 3,
     "SellRent":1,
     "Name": "New House",
-    "Type": "House",
+    "PType": "House",
     "Price": 12000,
     "Image":"prop-2"
   },
@@ -26,7 +26,7 @@
     "Id": 4,
     "SellRent":2,
     "Name": "Temp House",
-    "Type": "House",
+    "PType": "House",
     "Price": 12000,
     "Image":"prop-3"
   },
@@ -34,7 +34,7 @@
     "Id": 5,
     "SellRent":2,
     "Name": "Shimla House",
-    "Type": "House",
+    "PType": "House",
     "Price": 12000,
     "Image":"prop-4"
   },
@@ -42,7 +42,7 @@
     "Id": 6,
     "SellRent":2,
     "Name": "JJ1 House",
-    "Type": "House",
+    "PType": "House",
     "Price": 12000,
     "Image":"prop-5"
   }
