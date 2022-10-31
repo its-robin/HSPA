@@ -4,23 +4,27 @@
   <div class="card-header">
     <h3>List your Property</h3></div>
   <div class="card-body">
-    <form (ngSubmit)="onSubmit()" #Form="ngForm">
+    <form (ngSubmit)="onSubmit()" [formGroup]="addPropertyForm">
       <div class="tab-panel">
         <tabset class="member-tabset" #staticTabs>
-          <tab heading="Basic Information">
+          <tab heading="Basic Information" formGroupName="BasicInfo">
             <div class="form-group col-12">
               <p>I want to</p>
-              <div class="btn-group" btnRadioGroup>
+              <div class="btn-group" btnRadioGroup formControlName="SellRent" >
                 <label class="btn btn-outline-primary mr-2" tabindex="0" btnRadio=1 role="button"
                 name="SellRent">Sell</label>
                 <label class="btn btn-outline-primary"  tabindex="0" btnRadio=2 role="button"
                 name="SellRent">Rent</label>
               </div>
+              <div class="error-block" *ngIf="SellRent.invalid && NextClicked">
+                  Please select Sell or Rent
+              </div>
               </div>
 
               <div class="form-group col-12">
                 <p>BHK</p>
-                <div class="btn-group" btnRadioGroup>
+                <div class="btn-group" btnRadioGroup
+                [(ngModel)]="propertyView.BHK" name="BHK" [ngModelOptions]="{standalone:true}">
                   <label *ngFor="let bhk of ['1','2','3','4']" tabindex="0" class="btn btn-outline-primary mr-2" btnRadio="{{bhk}}" role="button"
                   name="SellRent">{{bhk}}</label>
 
@@ -30,8 +34,8 @@
 
             <div class="form-group col-12">
               <p>Property Type</p>
-              <div class="btn-group" btnRadioGroup name="propType"
-              [(ngModel)]="propertyView.PType">
+              <div class="btn-group" btnRadioGroup formControlName="pType"
+            >
                 <label *ngFor="let ptype of propertyTypes" tabindex="0" class="btn btn-outline-primary mr-2" btnRadio="{{ptype}}" role="button"
                 name="SellRent">{{ptype}}</label>
 
@@ -39,7 +43,8 @@
               </div>
               <div class="form-group col-12">
                 <p>Furnish Type</p>
-                <div class="btn-group" btnRadioGroup>
+                <div class="btn-group" btnRadioGroup
+                [(ngModel)]="propertyView.FType" name="FType" [ngModelOptions]="{standalone:true}">
                   <label *ngFor="let ftype of furnishTypes" tabindex="0" class="btn btn-outline-primary mr-2" btnRadio="{{ftype}}" role="button"
                   name="SellRent">{{ftype}}</label>
 
@@ -50,44 +55,43 @@
                   <input
                     type="text"
                     class="form-control"
-                    #propName="ngModel"
-                    ngModel
-                    name="Name"
+
+                    formControlName="Name"
                     required
                     minlength="5"
-                    [(ngModel)]="propertyView.Name"
+
                   />
                   <span
-                    *ngIf="!propName.valid && propName.touched"
+
                     class="error-block"
                   >
-                    <span *ngIf="propName.hasError('required')">
+                    <span >
                       Please provide name</span
                     >
-                    <span *ngIf="propName.hasError('minlength')">
+                    <span >
                       Name must be 5 chars long</span
                     >
                   </span>
                 </div>
             <div class="form-group col-12">
               <label for="price">City</label>
-              <input type="text" class="form-control"  />
+              <input type="text" class="form-control"  [(ngModel)]="propertyView.City" name="City" [ngModelOptions]="{standalone:true}"  />
             </div>
 
             <div class="form-group  d-grid">
               <button
                 type="button"
                 class="btn btn-primary btn-"
-                (click)="selectTab(1)"
+                (click)="selectTab(1 , BasicInfo.valid)"
               >
                 Next
               </button>
             </div>
           </tab>
-          <tab heading="Pricing and Area">
+          <tab heading="Pricing and Area" formGroupName="PriceInfo">
             <div class="form-group col-12">
               <label>Price (in USD)</label>
-              <input type="text" class="form-control"  name="price" [(ngModel)]="propertyView.Price">
+              <input type="text" class="form-control"  formControlName="Price" >
             </div>
 
             <div class="form-group col-12">
@@ -102,7 +106,7 @@
 
             <div class="form-group col-12">
               <label>Built Area (in Sqr Feet)</label>
-              <input type="text" class="form-control" />
+              <input type="text" class="form-control"  formControlName="BuiltArea" />
             </div>
 
             <div class="form-group col-12">
@@ -113,7 +117,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="selectTab(2)"
+                (click)="selectTab(2, BasicInfo.valid)"
               >
                 Next
               </button>
@@ -121,7 +125,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="selectTab(0)"
+                (click)="selectTab(0, BasicInfo.valid)"
               >
                 Back
               </button>
@@ -151,7 +155,7 @@
               <button
                 type="button"
                 class="btn btn-primary btn-"
-                (click)="selectTab(3)"
+                (click)="selectTab(3, BasicInfo.valid)"
               >
                 Next
               </button>
@@ -159,7 +163,7 @@
               <button
                 type="button"
                 class="btn btn-primary btn-"
-                (click)="selectTab(1)"
+                (click)="selectTab(1, BasicInfo.valid)"
               >
                 Back
               </button>
@@ -214,7 +218,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="selectTab(4)"
+                (click)="selectTab(4, BasicInfo.valid)"
               >
                 Next
               </button>
@@ -222,7 +226,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="selectTab(2)"
+                (click)="selectTab(2, BasicInfo.valid)"
               >
                 Back
               </button>
@@ -239,7 +243,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                (click)="selectTab(3)"
+                (click)="selectTab(3, BasicInfo.valid)"
               >
                 Back
               </button>

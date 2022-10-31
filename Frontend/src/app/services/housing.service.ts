@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Iproperty } from '../property/Iproperty.interface';
+import { IPropertyBase } from '../model/ipropertybase';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class HousingService {
   getAllProperties(SellRent: number){
      return this.http.get<any[]>('data/properties.json').pipe(
       map(data =>  {
-        const propertiesArray : Array<Iproperty>=[];
+        const propertiesArray : Array<IPropertyBase>=[];
         for (const id in data )
         {
 
