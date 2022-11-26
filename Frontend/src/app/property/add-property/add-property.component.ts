@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Form, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { IProperty } from 'src/app/model/iproperty';
+import { Property } from 'src/app/model/property';
+import { HousingService } from 'src/app/services/housing.service';
 
 
 @Component({
@@ -15,6 +17,7 @@ export class AddPropertyComponent implements OnInit {
  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
 addPropertyForm : FormGroup;
 NextClicked: boolean;
+property = new Property();
  // WIll come from DB
 
 
@@ -25,14 +28,15 @@ NextClicked: boolean;
   Name:'',
   Price:null,
   SellRent:null,
-  PType:null,
+  pType:null,
   BHK:null,
   BuiltArea:null,
   City:null,
   RTM:null
  };
 
-  constructor(private router: Router, private fb: FormBuilder) { }
+  constructor(private router: Router, private fb: FormBuilder,
+    private housingService : HousingService) { }
 
   ngOnInit() {
     this.CreateAddPropertyForm();
@@ -41,21 +45,42 @@ NextClicked: boolean;
   CreateAddPropertyForm(){
     this.addPropertyForm = this.fb.group({
       BasicInfo : this.fb.group({
-        SellRent:[null,Validators.required],
-        pType:[null,Validators.required],
-        Name:[null,Validators.required]}
+        SellRent:['1',Validators.required],
+        BHK: [null, Validators.required],
+        pType: [null, Validators.required],
+        FType: [null, Validators.required],
+        Name: [null, Validators.required],
+        City: [null, Validators.required]}
       ),
       PriceInfo: this.fb.group({
-        Price:[null,Validators.required],
-        BuiltArea:[null,Validators.required]
+        Price: [null, Validators.required],
+        BuiltArea: [null, Validators.required],
+        CarpetArea: [null],
+        Security: [null],
+        Maintenance: [null],
+      }),
+
+      AddressInfo: this.fb.group({
+        FloorNo: [null],
+        TotalFloor: [null],
+        Address: [null, Validators.required],
+        LandMark: [null],
+      }),
+
+      OtherInfo: this.fb.group({
+        RTM: [null, Validators.required],
+        PossesionOn: [null],
+        AOP: [null],
+        Gated: [null],
+        MainEntrance: [null],
+        Description: [null]
       })
 
     }
-    )
+    );
   }
-  //------------//
-  //Getter Methods//
-  //------------//
+//#region <Getter Methods>
+  // #region <FormGroups>
  get BasicInfo()
   {
     return this.addPropertyForm.controls['BasicInfo'] as FormGroup;
@@ -70,6 +95,9 @@ NextClicked: boolean;
   get OtherInfo() {
     return this.addPropertyForm.controls['OtherInfo'] as FormGroup;
   }
+    //#endregion
+
+  //#region <Form Controls>
   get SellRent()
   {
     return this.BasicInfo.get('SellRent') as FormControl;
@@ -82,8 +110,8 @@ NextClicked: boolean;
     return this.BasicInfo.get('BHK') as FormControl;
   }
 
-  get PType() {
-    return this.BasicInfo.get('PType') as FormControl;
+  get pType() {
+    return this.BasicInfo.get('pType') as FormControl;
   }
 
   get FType() {
@@ -134,8 +162,8 @@ NextClicked: boolean;
     return this.OtherInfo.get('RTM') as FormControl;
   }
 
-  get PossessionOn() {
-    return this.OtherInfo.get('PossessionOn') as FormControl;
+  get PossesionOn() {
+    return this.OtherInfo.get('PossesionOn') as FormControl;
   }
 
   get AOP() {
@@ -154,6 +182,7 @@ NextClicked: boolean;
     return this.OtherInfo.get('Description') as FormControl;
   }
 
+    //#endregion
   onBack()
   {
     this.router.navigate(['/']);
@@ -161,22 +190,68 @@ NextClicked: boolean;
   onSubmit()
   {
     this.NextClicked=true;
+    if(this.alltabsvalid())
+    {
+      this.mapProperty();
+      this.housingService.addProperty(this.property);
+      console.log('Congrats, your property listed succeffully on our website');
+      console.log(this.addPropertyForm);
+    }
+    else
+    {
+      console.log('Please review the form and provide all valid enteries!');
+    }
+
+
+  }
+  mapProperty(): void {
+    this.property.SellRent = +this.SellRent.value;
+    this.property.BHK = this.BHK.value;
+    this.property.PType = this.pType.value;
+    this.property.Name = this.Name.value;
+    this.property.City = this.City.value;
+    this.property.FType = this.FType.value;
+    this.property.Price = this.Price.value;
+    this.property.Security = this.Security.value;
+    this.property.Maintenance = this.Maintenance.value;
+    this.property.BuiltArea = this.BuiltArea.value;
+    this.property.CarpetArea = this.CarpetArea.value;
+    this.property.FloorNo = this.FloorNo.value;
+    this.property.TotalFloor = this.TotalFloor.value;
+    this.property.Address = this.Address.value;
+    this.property.Address2 = this.LandMark.value;
+    this.property.RTM = this.RTM.value;
+    this.property.AOP = this.AOP.value;
+    this.property.Gated = this.Gated.value;
+    this.property.MainEntrance = this.MainEntrance.value;
+    this.property.Possession = this.PossesionOn.value;
+    this.property.Description = this.Description.value;
+    this.property.Image = 'propNA';
+    this.property.PostedOn = new Date().toString();
+  }
+  alltabsvalid(): boolean
+  {
     if(this.BasicInfo.invalid){
       this.staticTabs.tabs[0].active = true;
-      return;
+      return false;
     }
     if(this.PriceInfo.invalid){
       this.staticTabs.tabs[1].active = true;
-      return;
+      return false;
     }
 
-    console.log('Congrats , form submitted');
-    console.log('Basicinfo: '+this.BasicInfo.invalid);
+    if (this.AddressInfo.invalid) {
+      this.staticTabs.tabs[2].active = true;
+      return false;
+    }
 
-    console.log('SellRent='+this.addPropertyForm.value.BasicInfo.SellRent);
-    console.log(this.addPropertyForm);
-    console.log(this.SellRent);
+    if (this.OtherInfo.invalid) {
+      this.staticTabs.tabs[3].active = true;
+      return false;
+    }
+    return true;
   }
+
   selectTab(tabId: number, IsCurrentTabValid : boolean) {
     this.NextClicked=true;
     if(IsCurrentTabValid)
