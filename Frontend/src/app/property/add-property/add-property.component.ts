@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { esLocale } from 'ngx-bootstrap/chronos';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { IProperty } from 'src/app/model/iproperty';
 import { Property } from 'src/app/model/property';
+import { AlertifyService } from 'src/app/services/alertify.service';
 import { HousingService } from 'src/app/services/housing.service';
 
 
@@ -36,7 +38,8 @@ property = new Property();
  };
 
   constructor(private router: Router, private fb: FormBuilder,
-    private housingService : HousingService) { }
+    private housingService : HousingService
+    ,private alertify : AlertifyService) { }
 
   ngOnInit() {
     this.CreateAddPropertyForm();
@@ -194,17 +197,26 @@ property = new Property();
     {
       this.mapProperty();
       this.housingService.addProperty(this.property);
-      console.log('Congrats, your property listed succeffully on our website');
+      this.alertify.success('Congrats, your property listed successfully on our website');
       console.log(this.addPropertyForm);
+      if (this.SellRent.value === '2')
+      {
+        this.router.navigate(['/rent-property'])
+      }
+      else
+      {
+        this.router.navigate(['/'])
+      }
     }
     else
     {
-      console.log('Please review the form and provide all valid enteries!');
+      this.alertify.failure('Please review the form and provide all valid enteries!');
     }
 
 
   }
   mapProperty(): void {
+    this.property.Id= +this.housingService.newPropID();
     this.property.SellRent = +this.SellRent.value;
     this.property.BHK = this.BHK.value;
     this.property.PType = this.pType.value;
